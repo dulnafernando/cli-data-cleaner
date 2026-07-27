@@ -54,3 +54,19 @@ def handle_missing_values(df: pd.DataFrame, strategy: str = "drop") -> pd.DataFr
         return df.fillna(df.mean(numeric_only=True)).reset_index(drop=True)
     else:
         raise ValueError(f"Unknown strategy: {strategy}")
+
+def standardize_text_columns(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+    """
+    Strip whitespace and apply title case to specified text columns.
+
+    Args:
+        df: The DataFrame to clean.
+        columns: List of column names to standardize.
+
+    Returns:
+        A DataFrame with the specified columns cleaned.
+    """
+    df = df.copy()
+    for col in columns:
+        df[col] = df[col].str.strip().str.title()
+    return df

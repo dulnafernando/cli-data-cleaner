@@ -1,5 +1,4 @@
-from src.data_cleaner.cleaner import load_csv, remove_duplicate_rows, handle_missing_values
-
+from src.data_cleaner.cleaner import load_csv, remove_duplicate_rows, handle_missing_values, standardize_text_columns
 
 def test_load_csv_strips_column_whitespace(tmp_path):
     # Arrange: create a tiny temp CSV with messy headers
@@ -42,3 +41,17 @@ def test_handle_missing_values_drop(tmp_path):
     # Assert
     assert len(cleaned_df) == 2
     assert "Bob" not in cleaned_df["name"].tolist()
+
+def test_standardize_text_columns(tmp_path):
+    # Arrange: messy whitespace and inconsistent casing
+    csv_content = "name,region\n  Mike Wilson  ,south\nJane Doe,NORTH\n"
+    file_path = tmp_path / "test.csv"
+    file_path.write_text(csv_content)
+    df = load_csv(str(file_path))
+
+    # Act
+    cleaned_df = standardize_text_columns(df, columns=["name", "region"])
+
+    # Assert
+    assert cleaned_df["name"].tolist() == ["Mike Wilson", "Jane Doe"]
+    assert cleaned_df["region"].tolist() == ["South", "North"]
