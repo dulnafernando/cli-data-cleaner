@@ -1,5 +1,6 @@
-from src.data_cleaner.cleaner import load_csv, remove_duplicate_rows, handle_missing_values, standardize_text_columns
+import pandas as pd
 
+from src.data_cleaner.cleaner import load_csv, remove_duplicate_rows, handle_missing_values, standardize_text_columns, parse_dates
 def test_load_csv_strips_column_whitespace(tmp_path):
     # Arrange: create a tiny temp CSV with messy headers
     csv_content = "  name ,age\nAlice,30\nBob,25\n"
@@ -55,3 +56,18 @@ def test_standardize_text_columns(tmp_path):
     # Assert
     assert cleaned_df["name"].tolist() == ["Mike Wilson", "Jane Doe"]
     assert cleaned_df["region"].tolist() == ["South", "North"]
+
+def test_parse_dates(tmp_path):
+    # Arrange: three different date formats, all January 2024
+    csv_content = "order_id,order_date\n1,2024-01-15\n2,01/16/2024\n3,15-01-2024\n"
+    file_path = tmp_path / "test.csv"
+    file_path.write_text(csv_content)
+    df = load_csv(str(file_path))
+
+    # Act
+    cleaned_df = parse_dates(df, column="order_date")
+
+    # Assert
+    assert cleaned_df["order_date"].dtype.name.startswith("datetime")
+    assert cleaned_df["order_date"].iloc[0] == pd.Timestamp("2024-01-15")
+    assert cleaned_df["order_date"].iloc[1] == pd.Timestamp("2024-01-16")

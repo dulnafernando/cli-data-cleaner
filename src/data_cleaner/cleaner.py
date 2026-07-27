@@ -3,7 +3,6 @@ Core data cleaning functions for the CLI Data Cleaner tool.
 """
 import pandas as pd
 
-
 def load_csv(file_path: str) -> pd.DataFrame:
     """
     Load a CSV file into a DataFrame and strip whitespace from column names.
@@ -69,4 +68,19 @@ def standardize_text_columns(df: pd.DataFrame, columns: list[str]) -> pd.DataFra
     df = df.copy()
     for col in columns:
         df[col] = df[col].str.strip().str.title()
+    return df
+
+def parse_dates(df: pd.DataFrame, column: str) -> pd.DataFrame:
+    """
+    Parse a column of mixed-format date strings into proper datetime objects.
+
+    Args:
+        df: The DataFrame to clean.
+        column: The name of the column containing date strings.
+
+    Returns:
+        A DataFrame with the specified column converted to datetime.
+    """
+    df = df.copy()
+    df[column] = pd.to_datetime(df[column], format="mixed", dayfirst=False)
     return df
