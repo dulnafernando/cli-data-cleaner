@@ -1,0 +1,16 @@
+order_id,customer_name,  email ,product,quantity,price,order_date,region
+1001,John Smith,john.smith@email.com,Laptop,2,899.99,2024-01-15,North
+1002,jane doe,jane.doe@email.com,Mouse,5,19.99,01/16/2024,south
+1003,Bob Johnson,bob.johnson@email.com,Keyboard,,49.99,2024-01-17,East
+1004,Alice Brown,alice.brown@email.com,Monitor,1,,2024-01-18,West
+1005,John Smith,john.smith@email.com,Laptop,2,899.99,2024-01-15,North
+1006,  Mike Wilson  ,mike.wilson@email.com,Headphones,3,79.99,2024/01/19,North
+1007,Sarah Davis,SARAH.DAVIS@EMAIL.COM,Webcam,2,59.99,2024-01-20,South
+1008,Tom Lee,tom.lee@email.com,Laptop,1,899.99,15-01-2024,east
+1009,,unknown@email.com,Mouse,10,19.99,2024-01-21,West
+1010,Emma Wilson,emma.wilson@email.com,Keyboard,-2,49.99,2024-01-22,North
+1011,Chris Evans,chris.evans@email.com,Monitor,2,299.99,2024-01-23,South
+1012,Chris Evans,chris.evans@email.com,Monitor,2,299.99,2024-01-23,South
+1013,Nina Patel,nina.patel@email.com,Laptop,1,8999.99,2024-01-24,East
+1014,Sam Green, sam.green@email.com ,Headphones,,79.99,2024-01-25,west
+1015,Laura White,laura.white@email.com,Webcam,4,59.99,2024-01-26,North
