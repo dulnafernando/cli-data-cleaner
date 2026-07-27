@@ -1,5 +1,4 @@
-import pandas as pd
-from src.data_cleaner.cleaner import load_csv, remove_duplicate_rows
+from src.data_cleaner.cleaner import load_csv, remove_duplicate_rows, handle_missing_values
 
 
 def test_load_csv_strips_column_whitespace(tmp_path):
@@ -29,3 +28,17 @@ def test_remove_duplicate_rows(tmp_path):
     # Assert
     assert len(cleaned_df) == 2
     assert cleaned_df["name"].tolist() == ["Alice", "Bob"]
+
+def test_handle_missing_values_drop(tmp_path):
+    # Arrange: Bob has no age (missing value)
+    csv_content = "name,age\nAlice,30\nBob,\nCarol,22\n"
+    file_path = tmp_path / "test.csv"
+    file_path.write_text(csv_content)
+    df = load_csv(str(file_path))
+
+    # Act
+    cleaned_df = handle_missing_values(df, strategy="drop")
+
+    # Assert
+    assert len(cleaned_df) == 2
+    assert "Bob" not in cleaned_df["name"].tolist()
