@@ -27,3 +27,23 @@ def count_duplicate_rows(df: pd.DataFrame) -> int:
         The number of rows that are duplicates of an earlier row.
     """
     return int(df.duplicated().sum())
+
+def detect_outliers(df: pd.DataFrame, column: str) -> list[int]:
+    """
+    Detect outliers in a numeric column using the IQR (Interquartile Range) method.
+
+    Args:
+        df: The DataFrame to analyze.
+        column: The name of the numeric column to check for outliers.
+
+    Returns:
+        A list of row indices where the value is considered an outlier.
+    """
+    q1 = df[column].quantile(0.25)
+    q3 = df[column].quantile(0.75)
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+
+    outlier_mask = (df[column] < lower_bound) | (df[column] > upper_bound)
+    return df[outlier_mask].index.tolist()
