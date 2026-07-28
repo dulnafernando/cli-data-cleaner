@@ -1,6 +1,13 @@
 import pandas as pd
 
-from src.data_cleaner.cleaner import load_csv, remove_duplicate_rows, handle_missing_values, standardize_text_columns, parse_dates
+from src.data_cleaner.cleaner import (
+    load_csv,
+    remove_duplicate_rows,
+    handle_missing_values,
+    standardize_text_columns,
+    parse_dates,
+)
+
 def test_load_csv_strips_column_whitespace(tmp_path):
     # Arrange: create a tiny temp CSV with messy headers
     csv_content = "  name ,age\nAlice,30\nBob,25\n"
@@ -71,3 +78,34 @@ def test_parse_dates(tmp_path):
     assert cleaned_df["order_date"].dtype.name.startswith("datetime")
     assert cleaned_df["order_date"].iloc[0] == pd.Timestamp("2024-01-15")
     assert cleaned_df["order_date"].iloc[1] == pd.Timestamp("2024-01-16")
+
+
+def test_full_pipeline_on_real_sample_data():
+    """
+    Integration test: runs the full cleaning pipeline against the real
+    sample dataset, verifying all steps work correctly together.
+    """
+    # Arrange / Act: run the full pipeline, same steps as cli.py
+    df = load_csv("sample_data/messy_sales_data.csv")
+    original_row_count = len(df)
+
+    df = remove_duplicate_rows(df)
+    df = handle_missing_values(df, strategy="drop")
+    df = standardize_text_columns(df, columns=["customer_name", "region"])
+    df = parse_dates(df, column="order_date")
+
+    # Assert: no missing values remain
+    assert df.isna().sum().sum() == 0
+
+    # Assert: rows were actually dropped (missing values existed in the raw data)
+    assert len(df) < original_row_count
+
+    # Assert: dates are now a real datetime type, not text
+    assert df["order_date"].dtype.name.startswith("datetime")
+
+    # Assert: text standardization worked correctly
+    assert "South" in df["region"].values
+    assert "south" not in df["region"].values
+
+    # Assert: no column headers still have whitespace
+    assert all(col == col.strip() for col in df.columns)
