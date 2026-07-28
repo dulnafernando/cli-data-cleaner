@@ -1,5 +1,7 @@
 import pandas as pd
-from src.data_cleaner.profiler import count_missing_values, count_duplicate_rows, detect_outliers
+from src.data_cleaner.profiler import count_missing_values, count_duplicate_rows, detect_outliers, generate_report
+
+
 def test_count_missing_values():
     # Arrange: age has 1 missing value, name has 0
     df = pd.DataFrame({
@@ -13,6 +15,8 @@ def test_count_missing_values():
     # Assert
     assert result["name"] == 0
     assert result["age"] == 1
+
+
 def test_count_duplicate_rows():
     # Arrange: Alice row appears twice
     df = pd.DataFrame({
@@ -26,6 +30,7 @@ def test_count_duplicate_rows():
     # Assert
     assert result == 1
 
+
 def test_detect_outliers():
     # Arrange: 8999 is a clear outlier among prices around 800-900
     df = pd.DataFrame({
@@ -38,3 +43,17 @@ def test_detect_outliers():
     # Assert
     assert 3 in outlier_indices
     assert len(outlier_indices) == 1
+
+
+def test_generate_report():
+    df = pd.DataFrame({
+        "name": ["Alice", "Alice", "Bob", "Carol", "Dave"],
+        "price": [899.99, 899.99, 850.00, 8999.99, 875.00]
+    })
+
+    report = generate_report(df)
+
+    assert report["duplicate_rows"] == 1
+    assert report["missing_values"]["name"] == 0
+    assert "price" in report["outliers"]
+
